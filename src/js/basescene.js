@@ -7,7 +7,7 @@ import { Resources } from './resources.js';
 export class BaseScene extends Scene {
     constructor() {
         super();
-        this.winningTime = 30; // 30 seconds to win the level
+        this.winningTime = 10; // 30 seconds to win the level
         this.timeElapsed = 0;
         this.isGameOver = false;
     }
@@ -59,7 +59,7 @@ export class BaseScene extends Scene {
             color: Color.White,
             font: new Font({
                 family: 'Press Start 2P',
-                size: 24,
+                size: 48, // Increase font size for bigger letters
                 unit: FontUnit.Px,
                 color: Color.White
             })
@@ -72,7 +72,6 @@ export class BaseScene extends Scene {
             this.handleCarCollision(evt);
         });
 
-        console.log('BaseScene initialized');
     }
 
     onActivate() {
@@ -99,7 +98,6 @@ export class BaseScene extends Scene {
             this.add(this.timer);
             this.timer.start();
 
-            console.log('Timer started');
         } catch (error) {
             console.error('Error during onActivate:', error);
         }
@@ -110,7 +108,6 @@ export class BaseScene extends Scene {
 
         this.timeElapsed++;
         this.timerLabel.text = `Time: ${this.winningTime - this.timeElapsed}`;
-        console.log(`Time elapsed: ${this.timeElapsed}`);
 
         if (this.timeElapsed >= this.winningTime) {
             this.winLevel();
@@ -119,7 +116,8 @@ export class BaseScene extends Scene {
 
     winLevel() {
         this.isGameOver = true;
-        this.winningLabel.text = 'You Win!';
+        this.winningLabel.text = 'YOU WIN!';
+        this.winningLabel.pos = new Vector(this.engine.drawWidth / 2, this.engine.drawHeight / 2); // Ensure it's centered
         this.stopGame();
         setTimeout(() => {
             this.engine.goToScene('intro'); // Or transition to the next level
@@ -158,6 +156,9 @@ export class BaseScene extends Scene {
         // Update timer label position based on camera
         const cameraPos = this.camera.pos;
         this.timerLabel.pos = new Vector(cameraPos.x - engine.drawWidth / 2 + 50, cameraPos.y - engine.drawHeight / 2 + 50);
+
+        // Ensure winning label stays centered
+        this.winningLabel.pos = new Vector(engine.drawWidth / 2, engine.drawHeight / 2);
     }
 
     handleCarCollision(evt) {
@@ -217,5 +218,6 @@ export class BaseScene extends Scene {
             }, shakeDuration);
         }
     }
+
 
 }

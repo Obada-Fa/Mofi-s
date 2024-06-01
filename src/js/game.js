@@ -1,3 +1,5 @@
+// src/js/game.js
+
 import { Engine, DisplayMode } from 'excalibur';
 import { ResourceLoader } from './resources.js';
 import { IntroScene } from './introscene.js';
@@ -18,13 +20,19 @@ export class Game extends Engine {
     }
 
     onInitialize() {
-        this.addScene('intro', new IntroScene());
-        this.addScene('levelOne', new LevelOneScene());
-        this.addScene('levelTwo', new LevelTwoScene());
-        this.addScene('gameOver', new GameOverScene());
-        this.addScene('winning', new WinningScene()); // Add WinningScene
+        this.addSceneSafely('intro', new IntroScene());
+        this.addSceneSafely('levelOne', new LevelOneScene());
+        this.addSceneSafely('levelTwo', new LevelTwoScene());
+        this.addSceneSafely('gameOver', new GameOverScene());
+        this.addSceneSafely('winning', new WinningScene());
 
         this.goToScene('intro');
+    }
+
+    addSceneSafely(name, scene) {
+        if (!this.scenes[name]) {
+            this.addScene(name, scene);
+        }
     }
 }
 

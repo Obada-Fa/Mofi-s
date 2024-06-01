@@ -142,11 +142,6 @@ export class Car extends Actor {
         this.rotation = 0;
         this.isThrownOff = false; // Reset the throw state
         this.isUncontrollable = false; // Reset the uncontrollable state
-        if (this.clearActions) {
-            this.clearActions(); // Clear any ongoing actions
-        } else {
-            console.warn('clearActions is not available on Car instance.');
-        }
 
         // Reset the sprite to the default animation
         this.graphics.use(this.animation); // Use the default animation

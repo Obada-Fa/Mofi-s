@@ -1,3 +1,5 @@
+// src/js/levelone.js
+
 import { BaseScene } from './basescene.js';
 import { BusObstacle, OilObstacle } from './obstacle.js';
 
@@ -22,5 +24,16 @@ export class LevelOneScene extends BaseScene {
     onInitialize(engine) {
         super.onInitialize(engine);
         console.log('LevelOneScene initialized');
+    }
+
+    onActivate() {
+        super.onActivate();
+
+        // Clear existing obstacles from the road
+        this.road.obstacles.forEach(obstacle => this.remove(obstacle));
+        this.road.obstacles = [];
+
+        // Create new obstacles
+        this.createObstacles();
     }
 }
