@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'Press Start 2P';
+    src: url('../fonts/PressStart2P-Regular.ttf') format('truetype');
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgb(61, 61, 61);
+    display: flex;
+    justify-content: center;
+    font-family: 'Press Start 2P';
+}
