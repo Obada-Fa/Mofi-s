@@ -1,5 +1,3 @@
-// src/js/levelone.js
-
 import { BaseScene } from './basescene.js';
 import { BusObstacle, OilObstacle } from './obstacle.js';
 

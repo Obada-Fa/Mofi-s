@@ -10,6 +10,7 @@ export class BaseScene extends Scene {
         this.winningTime = 25; // 30 seconds to win the level
         this.timeElapsed = 0;
         this.isGameOver = false;
+        this.score = 0; // Initialize score
     }
 
     onInitialize(engine) {
@@ -67,39 +68,38 @@ export class BaseScene extends Scene {
         this.winningLabel.anchor.setTo(0.5, 0.5);
         this.add(this.winningLabel);
 
+        // Add score label
+        this.scoreLabel = new Label({
+            text: `Score: ${this.score}`,
+            pos: new Vector(50, 100),
+            color: Color.White,
+            font: new Font({
+                family: 'Press Start 2P',
+                size: 24,
+                unit: FontUnit.Px,
+                color: Color.White
+            })
+        });
+        this.add(this.scoreLabel);
+
         // Set up collision handling
         this.car.on('collisionstart', (evt) => {
             this.handleCarCollision(evt);
         });
 
+        // Update score every second
+        this.scoreTimer = new Timer({
+            fcn: () => this.updateScore(),
+            interval: 1000, // 1 second
+            repeats: true
+        });
+        this.add(this.scoreTimer);
     }
 
-    onActivate() {
-        try {
-            // Reset game state
-            this.timeElapsed = 0;
-            this.isGameOver = false;
-            this.winningLabel.text = '';
-            this.car.reset();
-            this.timerLabel.text = `Time: ${this.winningTime}`;
-
-            // Ensure timer is stopped before creating a new one
-            if (this.timer) {
-                this.timer.cancel();
-                this.remove(this.timer);
-            }
-
-            // Add and start a new timer
-            this.timer = new Timer({
-                fcn: () => this.updateTime(),
-                interval: 1000, // 1 second
-                repeats: true
-            });
-            this.add(this.timer);
-            this.timer.start();
-
-        } catch (error) {
-            console.error('Error during onActivate:', error);
+    updateScore() {
+        if (!this.isGameOver) {
+            this.score += 10; // Increment score
+            this.scoreLabel.text = `Score: ${this.score}`;
         }
     }
 
@@ -119,6 +119,7 @@ export class BaseScene extends Scene {
         this.winningLabel.text = 'YOU WIN!';
         this.winningLabel.pos = new Vector(this.engine.drawWidth / 2, this.engine.drawHeight / 2); // Ensure it's centered
         this.stopGame();
+        this.saveScore(); // Save score locally
         setTimeout(() => {
             this.engine.goToScene('intro'); // Or transition to the next level
         }, 2000);
@@ -126,10 +127,9 @@ export class BaseScene extends Scene {
 
     gameOver() {
         this.isGameOver = true;
-
-        // Allow the car to complete its throw-off animation before stopping the game and transitioning scenes
+        this.stopGame();
+        this.saveScore(); // Save score locally
         setTimeout(() => {
-            this.stopGame();
             this.engine.goToScene('gameOver'); // Go to Game Over scene
         }, 1000); // Reduced delay to 1 second
     }
@@ -137,6 +137,9 @@ export class BaseScene extends Scene {
     stopGame() {
         if (this.timer) {
             this.timer.cancel();
+        }
+        if (this.scoreTimer) {
+            this.scoreTimer.cancel();
         }
         this.car.actions.clearActions();
         this.car.vel = Vector.Zero.clone();
@@ -148,6 +151,44 @@ export class BaseScene extends Scene {
         });
     }
 
+    saveScore() {
+        localStorage.setItem('lastScore', this.score);
+    }
+
+    onActivate() {
+        try {
+            // Reset game state
+            this.timeElapsed = 0;
+            this.isGameOver = false;
+            this.winningLabel.text = '';
+            this.car.reset();
+            this.timerLabel.text = `Time: ${this.winningTime}`;
+            this.score = 0; // Reset score
+            this.scoreLabel.text = `Score: ${this.score}`;
+
+            // Ensure timer is stopped before creating a new one
+            if (this.timer) {
+                this.timer.cancel();
+                this.remove(this.timer);
+            }
+
+            // Add and start a new timer
+            this.timer = new Timer({
+                fcn: () => this.updateTime(),
+                interval: 1000, // 1 second
+                repeats: true
+            });
+            this.add(this.timer);
+            this.timer.start();
+
+            // Start the score timer
+            this.scoreTimer.start();
+
+        } catch (error) {
+            console.error('Error during onActivate:', error);
+        }
+    }
+
     onPreUpdate(engine, delta) {
         if (this.isGameOver) return;
 
@@ -156,6 +197,7 @@ export class BaseScene extends Scene {
         // Update timer label position based on camera
         const cameraPos = this.camera.pos;
         this.timerLabel.pos = new Vector(cameraPos.x - engine.drawWidth / 2 + 50, cameraPos.y - engine.drawHeight / 2 + 50);
+        this.scoreLabel.pos = new Vector(cameraPos.x - engine.drawWidth / 2 + 50, cameraPos.y - engine.drawHeight / 2 + 100);
 
         // Ensure winning label stays centered
         this.winningLabel.pos = new Vector(engine.drawWidth / 2, engine.drawHeight / 2);
@@ -166,27 +208,27 @@ export class BaseScene extends Scene {
         if (other instanceof BusObstacle) {
             const carCenterX = this.car.pos.x;
             const busCenterX = other.pos.x;
-    
+
             // Determine the direction to throw the car
             const throwDirection = carCenterX < busCenterX ? -1 : 1; // -1 for left, 1 for right
-    
+
             this.car.isThrownOff = true;
             this.car.isUncontrollable = true;
             this.car.vel = new Vector(throwDirection * 250, -125); // Apply a force to throw the car off screen
             this.car.graphics.use(Resources.Smashed.toSprite());
-    
+
             // Apply a rotation for a realistic effect
             const rotationDirection = throwDirection === 1 ? RotationType.Clockwise : RotationType.CounterClockwise;
             this.car.actions.rotateBy(Math.PI / 4 * throwDirection, 0.7, rotationDirection);
-    
+
             this.gameOver();
         } else if (other instanceof OilObstacle) {
             if (this.car.isUncontrollable) return;
-    
+
             this.car.isUncontrollable = true;
             const shakeDuration = 1000; // Duration of uncontrollable state in milliseconds
             const shakeIntensity = 5; // Intensity of the shake
-    
+
             // Shake effect
             const shake = (elapsedTime) => {
                 if (elapsedTime >= shakeDuration) {
@@ -195,15 +237,15 @@ export class BaseScene extends Scene {
                     this.car.rotation = 0; // Reset rotation to 0
                     return;
                 }
-    
+
                 this.car.pos.x += (Math.random() - 0.5) * shakeIntensity;
                 this.car.pos.y += (Math.random() - 0.5) * shakeIntensity;
-    
+
                 setTimeout(() => shake(elapsedTime + 100), 100);
             };
-    
+
             shake(0);
-    
+
             // Rotation animation
             this.car.actions.repeatForever((ctx) => {
                 ctx.rotateBy(Math.PI / 16, 100).rotateBy(-Math.PI / 8, 100).rotateBy(Math.PI / 16, 100);
@@ -211,13 +253,15 @@ export class BaseScene extends Scene {
                 this.car.isUncontrollable = false;
                 this.car.rotation = 0; // Reset rotation to 0
             });
-    
+
             setTimeout(() => {
                 this.car.isUncontrollable = false; // Allow control again after 1 second
                 this.car.rotation = 0; // Reset rotation to 0
             }, shakeDuration);
+
+            this.score -= 50; // Decrement score
+            if (this.score < 0) this.score = 0;
+            this.scoreLabel.text = `Score: ${this.score}`;
         }
     }
-
-
 }
