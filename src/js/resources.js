@@ -1,14 +1,14 @@
 import { ImageSource, Loader } from 'excalibur';
 
 const Resources = {
-    Bus: new ImageSource('/images/bus.png'),
-    Oil: new ImageSource('/images/oil.png'),
-    Smashed: new ImageSource('/images/smashed.png'),
-    GameOverBG: new ImageSource('/images/gameoverBG.png'),
-    Mofi: new ImageSource('/images/mofi.png'),
-    MofiSpriteSheet: new ImageSource('/images/mofispritesheet.png'),
-    CarSpriteSheet: new ImageSource('/images/carspritesheet.png'),
-    Background: new ImageSource('/images/background.png')
+    Bus: new ImageSource('docs/bus.png'),
+    Oil: new ImageSource('docs/oil.png'),
+    Smashed: new ImageSource('docs/smashed.png'),
+    GameOverBG: new ImageSource('docs/gameoverBG.png'),
+    Mofi: new ImageSource('docs/mofi.png'),
+    MofiSpriteSheet: new ImageSource('docs/mofispritesheet.png'),
+    CarSpriteSheet: new ImageSource('docs/carspritesheet.png'),
+    Background: new ImageSource('docs/background.png')
 };
 
 const ResourceLoader = new Loader(Object.values(Resources));
