@@ -7,7 +7,7 @@ import { Resources } from './resources.js';
 export class BaseScene extends Scene {
     constructor() {
         super();
-        this.winningTime = 25; // 30 seconds to win the level
+        this.winningTime = 25;
         this.timeElapsed = 0;
         this.isGameOver = false;
         this.score = 0; // Initialize score
@@ -45,7 +45,7 @@ export class BaseScene extends Scene {
             pos: new Vector(50, 50),
             color: Color.White,
             font: new Font({
-                family: 'Press Start 2P',
+                family: 'VT323',
                 size: 24,
                 unit: FontUnit.Px,
                 color: Color.White
@@ -57,10 +57,10 @@ export class BaseScene extends Scene {
         // Add winning label
         this.winningLabel = new Label({
             text: '',
-            pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 2),
+            pos: new Vector(0, engine.drawHeight / 2),
             color: Color.White,
             font: new Font({
-                family: 'Press Start 2P',
+                family: 'VT323',
                 size: 48, // Increase font size for bigger letters
                 unit: FontUnit.Px,
                 color: Color.White
@@ -76,7 +76,7 @@ export class BaseScene extends Scene {
             pos: new Vector(50, 100),
             color: Color.White,
             font: new Font({
-                family: 'Press Start 2P',
+                family: 'VT323',
                 size: 24,
                 unit: FontUnit.Px,
                 color: Color.White
@@ -120,7 +120,7 @@ export class BaseScene extends Scene {
     winLevel() {
         this.isGameOver = true;
         this.winningLabel.text = 'YOU WIN!';
-        this.winningLabel.pos = new Vector(this.engine.drawWidth / 2, this.engine.drawHeight / 2); // Ensure it's centered
+        this.winningLabel.pos = new Vector(0, this.engine.drawHeight / 2); // Ensure it's centered
         this.stopGame();
         this.saveScore(); // Save score locally
         setTimeout(() => {
@@ -217,6 +217,7 @@ export class BaseScene extends Scene {
         const cameraPos = this.camera.pos;
         this.timerLabel.pos = new Vector(cameraPos.x - engine.drawWidth / 2 + 50, cameraPos.y - engine.drawHeight / 2 + 50);
         this.scoreLabel.pos = new Vector(cameraPos.x - engine.drawWidth / 2 + 50, cameraPos.y - engine.drawHeight / 2 + 100);
+        this.winningLabel.pos = new Vector(cameraPos.x - engine.drawWidth / 2 + 50, cameraPos.y - engine.drawHeight / 2 + 100);
 
         // Ensure winning label stays centered
         this.winningLabel.pos = new Vector(engine.drawWidth / 2, engine.drawHeight / 2);

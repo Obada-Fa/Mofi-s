@@ -91,6 +91,7 @@ export class GameOverScene extends Scene {
         } else if (evt.key === 'Enter') {
             if (this.selectedOption === 0) {
                 engine.goToScene('levelOne'); // Restart the level
+                
             } else {
                 engine.goToScene('intro'); // Go to intro scene
             }
