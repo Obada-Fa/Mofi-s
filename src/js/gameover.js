@@ -18,7 +18,6 @@ export class GameOverScene extends Scene {
             font: new Font({
                 family: 'VT323', // New font
                 size: 48,
-                unit: FontUnit.Px,
                 color: Color.Red,
                 textAlign: TextAlign.Center,
             })
@@ -34,7 +33,6 @@ export class GameOverScene extends Scene {
             font: new Font({
                 family: 'VT323', // New font
                 size: 36,
-                unit: FontUnit.Px,
                 color: Color.Yellow,
                 textAlign: TextAlign.Center,
             })
@@ -71,6 +69,21 @@ export class GameOverScene extends Scene {
         engine.input.keyboard.on('press', (evt) => this.handleInput(evt, engine));
     }
 
+    onActivate() {
+        // Reset selected option and update selection
+        this.selectedOption = 0;
+        this.updateSelection();
+
+        // Re-add the Mofi image actor to ensure it's displayed correctly
+        if (!this.actors.includes(this.mofiImage)) {
+            this.add(this.mofiImage);
+        }
+
+        // Ensure the keyboard listener is re-attached
+        this.engine.input.keyboard.off('press');
+        this.engine.input.keyboard.on('press', (evt) => this.handleInput(evt, this.engine));
+    }
+
     handleInput(evt, engine) {
         if (evt.key === 'ArrowDown' || evt.key === 'ArrowUp') {
             this.selectedOption = this.selectedOption === 0 ? 1 : 0;
@@ -79,7 +92,7 @@ export class GameOverScene extends Scene {
             if (this.selectedOption === 0) {
                 engine.goToScene('levelOne'); // Restart the level
             } else {
-                window.close(); // Close the window (works in some browsers and environments)
+                engine.goToScene('intro'); // Go to intro scene
             }
         }
     }
@@ -87,12 +100,12 @@ export class GameOverScene extends Scene {
     updateSelection() {
         if (this.selectedOption === 0) {
             this.playAgainLabel.color = Color.Yellow;
-            this.exitLabel.color = Color.black;
-            this.mofiImage.pos = new Vector(this.playAgainLabel.pos.x - 130, this.playAgainLabel.pos.y -30); // Adjust position as needed
+            this.exitLabel.color = Color.Black;
+            this.mofiImage.pos = new Vector(this.playAgainLabel.pos.x - 130, this.playAgainLabel.pos.y - 30); // Adjust position as needed
         } else {
             this.playAgainLabel.color = Color.Black;
             this.exitLabel.color = Color.Yellow;
-            this.mofiImage.pos = new Vector(this.exitLabel.pos.x - 130, this.exitLabel.pos.y-30); // Adjust position as needed
+            this.mofiImage.pos = new Vector(this.exitLabel.pos.x - 130, this.exitLabel.pos.y - 30); // Adjust position as needed
         }
     }
 }

@@ -49,7 +49,8 @@ export class BaseScene extends Scene {
                 size: 24,
                 unit: FontUnit.Px,
                 color: Color.White
-            })
+            }),
+            z: 4
         });
         this.add(this.timerLabel);
 
@@ -63,7 +64,8 @@ export class BaseScene extends Scene {
                 size: 48, // Increase font size for bigger letters
                 unit: FontUnit.Px,
                 color: Color.White
-            })
+            }),
+            z: 4
         });
         this.winningLabel.anchor.setTo(0.5, 0.5);
         this.add(this.winningLabel);
@@ -78,7 +80,8 @@ export class BaseScene extends Scene {
                 size: 24,
                 unit: FontUnit.Px,
                 color: Color.White
-            })
+            }),
+            z: 4
         });
         this.add(this.scoreLabel);
 
@@ -127,9 +130,11 @@ export class BaseScene extends Scene {
 
     gameOver() {
         this.isGameOver = true;
-        this.stopGame();
-        this.saveScore(); // Save score locally
+
+        // Allow the car to complete its throw-off animation before stopping the game and transitioning scenes
         setTimeout(() => {
+            this.stopGame();
+            this.saveScore();
             this.engine.goToScene('gameOver'); // Go to Game Over scene
         }, 1000); // Reduced delay to 1 second
     }
@@ -152,7 +157,11 @@ export class BaseScene extends Scene {
     }
 
     saveScore() {
-        localStorage.setItem('lastScore', this.score);
+        const lastScore = { score: this.score, date: new Date().toISOString() };
+        let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
+        highScores.push(lastScore);
+        highScores = highScores.sort((a, b) => b.score - a.score).slice(0, 5); // Keep top 5 scores
+        localStorage.setItem('highScores', JSON.stringify(highScores));
     }
 
     onActivate() {
@@ -166,13 +175,17 @@ export class BaseScene extends Scene {
             this.score = 0; // Reset score
             this.scoreLabel.text = `Score: ${this.score}`;
 
-            // Ensure timer is stopped before creating a new one
+            // Ensure timers are stopped before creating new ones
             if (this.timer) {
                 this.timer.cancel();
                 this.remove(this.timer);
             }
+            if (this.scoreTimer) {
+                this.scoreTimer.cancel();
+                this.remove(this.scoreTimer);
+            }
 
-            // Add and start a new timer
+            // Add and start a new timer for game time
             this.timer = new Timer({
                 fcn: () => this.updateTime(),
                 interval: 1000, // 1 second
@@ -181,7 +194,13 @@ export class BaseScene extends Scene {
             this.add(this.timer);
             this.timer.start();
 
-            // Start the score timer
+            // Add and start a new timer for score
+            this.scoreTimer = new Timer({
+                fcn: () => this.updateScore(),
+                interval: 1000, // 1 second
+                repeats: true
+            });
+            this.add(this.scoreTimer);
             this.scoreTimer.start();
 
         } catch (error) {
@@ -208,27 +227,27 @@ export class BaseScene extends Scene {
         if (other instanceof BusObstacle) {
             const carCenterX = this.car.pos.x;
             const busCenterX = other.pos.x;
-
+    
             // Determine the direction to throw the car
             const throwDirection = carCenterX < busCenterX ? -1 : 1; // -1 for left, 1 for right
-
+    
             this.car.isThrownOff = true;
             this.car.isUncontrollable = true;
             this.car.vel = new Vector(throwDirection * 250, -125); // Apply a force to throw the car off screen
             this.car.graphics.use(Resources.Smashed.toSprite());
-
+    
             // Apply a rotation for a realistic effect
             const rotationDirection = throwDirection === 1 ? RotationType.Clockwise : RotationType.CounterClockwise;
             this.car.actions.rotateBy(Math.PI / 4 * throwDirection, 0.7, rotationDirection);
-
+    
             this.gameOver();
         } else if (other instanceof OilObstacle) {
             if (this.car.isUncontrollable) return;
-
+    
             this.car.isUncontrollable = true;
             const shakeDuration = 1000; // Duration of uncontrollable state in milliseconds
             const shakeIntensity = 5; // Intensity of the shake
-
+    
             // Shake effect
             const shake = (elapsedTime) => {
                 if (elapsedTime >= shakeDuration) {
@@ -237,15 +256,15 @@ export class BaseScene extends Scene {
                     this.car.rotation = 0; // Reset rotation to 0
                     return;
                 }
-
+    
                 this.car.pos.x += (Math.random() - 0.5) * shakeIntensity;
                 this.car.pos.y += (Math.random() - 0.5) * shakeIntensity;
-
+    
                 setTimeout(() => shake(elapsedTime + 100), 100);
             };
-
+    
             shake(0);
-
+    
             // Rotation animation
             this.car.actions.repeatForever((ctx) => {
                 ctx.rotateBy(Math.PI / 16, 100).rotateBy(-Math.PI / 8, 100).rotateBy(Math.PI / 16, 100);
@@ -253,7 +272,7 @@ export class BaseScene extends Scene {
                 this.car.isUncontrollable = false;
                 this.car.rotation = 0; // Reset rotation to 0
             });
-
+    
             setTimeout(() => {
                 this.car.isUncontrollable = false; // Allow control again after 1 second
                 this.car.rotation = 0; // Reset rotation to 0
