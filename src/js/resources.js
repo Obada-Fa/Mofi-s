@@ -8,6 +8,7 @@ const Resources = {
     Oil : new ImageSource('/images/oil.png'),
     Smashed: new ImageSource('/images/smashed.png'),
     Mofi: new ImageSource('/images/mofi.png'),
+    MofiSpriteSheet: new ImageSource('/images/mofispritesheet.png'),
 };
 
 const ResourceLoader = new Loader(Object.values(Resources));

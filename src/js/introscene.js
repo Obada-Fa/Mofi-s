@@ -1,5 +1,3 @@
-// src/js/introscene.js
-
 import { Scene, Vector, Label, Color, Actor, Font, TextAlign } from 'excalibur';
 import { Resources } from './resources.js';
 import '../css/style.css'; // Ensure CSS is imported to apply styles
@@ -19,13 +17,21 @@ export class IntroScene extends Scene {
             pos: new Vector(engine.drawWidth / 2, 230),
             color: Color.Yellow,
             font: new Font({
-                size: 48,
+                size: 42,
                 family: 'VT323',
                 textAlign: TextAlign.Center,
             })
         });
         startLabel.anchor.setTo(0.5, 0.5);
         this.add(startLabel);
+
+        // Create the Mofi image actor
+        const mofiImage = new Actor({
+            pos: new Vector(engine.drawWidth / 2 - 240, 450), // Position it next to the text
+            scale: new Vector(0.3, 0.3) // Scale the image to 0.2
+        });
+        mofiImage.graphics.use(Resources.Mofi.toSprite());
+        this.add(mofiImage);
 
         // Set up the input listener
         engine.input.keyboard.on('press', (evt) => {

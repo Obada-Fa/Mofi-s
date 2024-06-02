@@ -46,7 +46,7 @@ export class GameOverScene extends Scene {
         this.exitLabel = new Label({
             text: 'Exit',
             pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 2 + 50),
-            color: Color.Gray,
+            color: Color.Black,
             font: new Font({
                 family: 'Pixelify Sans', // New font
                 size: 36,
@@ -57,6 +57,12 @@ export class GameOverScene extends Scene {
         });
         this.exitLabel.anchor.setTo(0.5, 0.5);
         this.add(this.exitLabel);
+
+        // Create the Mofi image actor
+        this.mofiImage = new Actor();
+        this.mofiImage.scale = new Vector(0.2, 0.2);
+        this.mofiImage.graphics.use(Resources.Mofi.toSprite());
+        this.add(this.mofiImage);
 
         // Add keyboard navigation
         this.selectedOption = 0;
@@ -81,10 +87,12 @@ export class GameOverScene extends Scene {
     updateSelection() {
         if (this.selectedOption === 0) {
             this.playAgainLabel.color = Color.Yellow;
-            this.exitLabel.color = Color.Black;
+            this.exitLabel.color = Color.black;
+            this.mofiImage.pos = new Vector(this.playAgainLabel.pos.x - 200, this.playAgainLabel.pos.y); // Adjust position as needed
         } else {
             this.playAgainLabel.color = Color.Black;
             this.exitLabel.color = Color.Yellow;
+            this.mofiImage.pos = new Vector(this.exitLabel.pos.x - 200, this.exitLabel.pos.y); // Adjust position as needed
         }
     }
 }
