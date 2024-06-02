@@ -26,7 +26,7 @@ export class GameOverScene extends Scene {
         gameOverLabel.anchor.setTo(0.5, 0.5);
         this.add(gameOverLabel);
 
-        // Create a "Play Again" label
+        // "Play Again" label
         this.playAgainLabel = new Label({
             text: 'Play Again',
             pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 2),
@@ -42,13 +42,13 @@ export class GameOverScene extends Scene {
         this.playAgainLabel.anchor.setTo(0.5, 0.5);
         this.add(this.playAgainLabel);
 
-        // Create an "Exit" label
+        // "Exit" label
         this.exitLabel = new Label({
             text: 'Exit',
             pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 2 + 50),
             color: Color.Black,
             font: new Font({
-                family: 'Pixelify Sans', // New font
+                family: 'VT323', 
                 size: 36,
                 unit: FontUnit.Px,
                 color: Color.Black,
@@ -88,11 +88,11 @@ export class GameOverScene extends Scene {
         if (this.selectedOption === 0) {
             this.playAgainLabel.color = Color.Yellow;
             this.exitLabel.color = Color.black;
-            this.mofiImage.pos = new Vector(this.playAgainLabel.pos.x - 200, this.playAgainLabel.pos.y); // Adjust position as needed
+            this.mofiImage.pos = new Vector(this.playAgainLabel.pos.x - 130, this.playAgainLabel.pos.y -30); // Adjust position as needed
         } else {
             this.playAgainLabel.color = Color.Black;
             this.exitLabel.color = Color.Yellow;
-            this.mofiImage.pos = new Vector(this.exitLabel.pos.x - 200, this.exitLabel.pos.y); // Adjust position as needed
+            this.mofiImage.pos = new Vector(this.exitLabel.pos.x - 130, this.exitLabel.pos.y-30); // Adjust position as needed
         }
     }
 }

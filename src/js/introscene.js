@@ -1,4 +1,4 @@
-import { Scene, Vector, Label, Color, Actor, Font, TextAlign } from 'excalibur';
+import { Scene, Vector, Label, Color, Actor, Font, TextAlign, Animation, SpriteSheet } from 'excalibur';
 import { Resources } from './resources.js';
 import '../css/style.css'; // Ensure CSS is imported to apply styles
 
@@ -17,7 +17,7 @@ export class IntroScene extends Scene {
             pos: new Vector(engine.drawWidth / 2, 230),
             color: Color.Yellow,
             font: new Font({
-                size: 42,
+                size: 48,
                 family: 'VT323',
                 textAlign: TextAlign.Center,
             })
@@ -25,12 +25,26 @@ export class IntroScene extends Scene {
         startLabel.anchor.setTo(0.5, 0.5);
         this.add(startLabel);
 
-        // Create the Mofi image actor
+        // Create the Mofi sprite sheet
+        const mofiSpriteSheet = SpriteSheet.fromImageSource({
+            image: Resources.MofiSpriteSheet,
+            grid: {
+                rows: 1,
+                columns: 2,
+                spriteWidth: 404, // Adjust based on actual sprite size
+                spriteHeight: 886 // Adjust based on actual sprite size
+            }
+        });
+
+        // Create an animation from the sprite sheet
+        const mofiAnimation = Animation.fromSpriteSheet(mofiSpriteSheet, [0, 1, 2, 3], 100);
+
+        // Create the Mofi image actor with animation
         const mofiImage = new Actor({
-            pos: new Vector(engine.drawWidth / 2 - 240, 450), // Position it next to the text
+            pos: new Vector(engine.drawWidth / 2 - 220, 490), // Position it next to the text
             scale: new Vector(0.3, 0.3) // Scale the image to 0.2
         });
-        mofiImage.graphics.use(Resources.Mofi.toSprite());
+        mofiImage.graphics.use(mofiAnimation);
         this.add(mofiImage);
 
         // Set up the input listener

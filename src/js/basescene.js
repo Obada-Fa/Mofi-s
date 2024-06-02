@@ -7,7 +7,7 @@ import { Resources } from './resources.js';
 export class BaseScene extends Scene {
     constructor() {
         super();
-        this.winningTime = 10; // 30 seconds to win the level
+        this.winningTime = 25; // 30 seconds to win the level
         this.timeElapsed = 0;
         this.isGameOver = false;
     }
