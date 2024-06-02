@@ -16,11 +16,11 @@ export class IntroScene extends Scene {
         // Create the start label with the loaded font
         const startLabel = new Label({
             text: "This is Mofi's racing game!\nPress Enter to Continue",
-            pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 2),
+            pos: new Vector(engine.drawWidth / 2, 230),
             color: Color.Yellow,
             font: new Font({
                 size: 48,
-                family: 'Press Start 2P', // Ensure this matches the CSS font-family
+                family: 'VT323',
                 textAlign: TextAlign.Center,
             })
         });

@@ -1,17 +1,26 @@
-import { Scene, Label, Vector, Color, Font, FontUnit } from 'excalibur';
+import { Scene, Label, Vector, Color, Font, FontUnit, Actor, TextAlign } from 'excalibur';
+import { Resources } from './resources.js';
 
 export class GameOverScene extends Scene {
     onInitialize(engine) {
+        // Create the background actor
+        const background = new Actor();
+        const backgroundSprite = Resources.GameOverBG.toSprite();
+        background.graphics.use(backgroundSprite);
+        background.pos = new Vector(engine.drawWidth / 2, engine.drawHeight / 2);
+        this.add(background);
+
         // Create a "Game Over" label
         const gameOverLabel = new Label({
             text: 'Game Over',
             pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 3),
             color: Color.Red,
             font: new Font({
-                family: 'Press Start 2P', // Retro font
+                family: 'VT323', // New font
                 size: 48,
                 unit: FontUnit.Px,
                 color: Color.Red,
+                textAlign: TextAlign.Center,
             })
         });
         gameOverLabel.anchor.setTo(0.5, 0.5);
@@ -23,10 +32,11 @@ export class GameOverScene extends Scene {
             pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 2),
             color: Color.Yellow,
             font: new Font({
-                family: 'Press Start 2P',
+                family: 'VT323', // New font
                 size: 36,
                 unit: FontUnit.Px,
                 color: Color.Yellow,
+                textAlign: TextAlign.Center,
             })
         });
         this.playAgainLabel.anchor.setTo(0.5, 0.5);
@@ -38,10 +48,11 @@ export class GameOverScene extends Scene {
             pos: new Vector(engine.drawWidth / 2, engine.drawHeight / 2 + 50),
             color: Color.Gray,
             font: new Font({
-                family: 'Press Start 2P',
+                family: 'Pixelify Sans', // New font
                 size: 36,
                 unit: FontUnit.Px,
-                color: Color.Gray,
+                color: Color.Black,
+                textAlign: TextAlign.Center,
             })
         });
         this.exitLabel.anchor.setTo(0.5, 0.5);
@@ -70,11 +81,10 @@ export class GameOverScene extends Scene {
     updateSelection() {
         if (this.selectedOption === 0) {
             this.playAgainLabel.color = Color.Yellow;
-            this.exitLabel.color = Color.Gray;
+            this.exitLabel.color = Color.Black;
         } else {
-            this.playAgainLabel.color = Color.Gray;
+            this.playAgainLabel.color = Color.Black;
             this.exitLabel.color = Color.Yellow;
         }
     }
-    
 }
